@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
 use App\Article;
+use Validator;
 
 class ArticleController extends Controller
 {
@@ -34,10 +35,39 @@ class ArticleController extends Controller
 
     }
     public function update(Request $request, $id){
-        return abort(403);
+        $user = Auth::user();
+        if(!$user)
+            return [
+                'status'=>0,
+                'msg'=>'无权限'
+            ];
+        $article = Article::find($id);
+        if(!$article)
+            return [
+                'status'=>0,
+                'msg'=>'找不到该文章'
+            ];
+        if($article->user_id!=$user->id)
+            return [
+                'status'=>0,
+                'msg'=>'该用户无修改该文章的权限'
+            ];
+        $article->update($request->all());
+        return [
+            'status'=>1,
+            'msg'=>'修改成功'
+        ];
     }
 
-    public function add(Request $request){
+    public function store(Request $request){
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|max:255',
+            'content' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
         $user = Auth::user();
         $article = new Article();
         $article->title = $request->get('title');
@@ -46,7 +76,7 @@ class ArticleController extends Controller
             $article->user_id = $user->id;
         }
         $article->save();
-        return redirect('/home');
+        return ['status' => 1, 'msg'=>'发布成功'];
 
     }
 }
