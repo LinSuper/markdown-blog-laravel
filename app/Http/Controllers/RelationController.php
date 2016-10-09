@@ -52,4 +52,14 @@ class RelationController extends Controller
             'msg'=>'操作失败'
         ];
     }
+
+    public function unfollow(Request $request){
+        $user_id = $request->get('user_id', -1);
+        $user = Auth::user();
+        $user->follower()->detach($user_id);
+        return [
+            'status'=>1,
+            'msg'=>'操作成功'
+        ];
+    }
 }

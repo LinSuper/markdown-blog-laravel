@@ -27,10 +27,10 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function follower(){
+    public function followee(){
         return $this->belongsToMany('App\User', 'relations', 'user_id', 'follow_id');
     }
-    public function followee(){
-        return $this->belongsToMany('App\Role', 'relations', 'follow_id', 'user_id');
+    public function follower(){
+        return $this->belongsToMany('App\User', 'relations', 'follow_id', 'user_id');
     }
 }
