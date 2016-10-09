@@ -34,6 +34,14 @@ class ArticleController extends Controller
 
 
     }
+
+    public function index(Request $request){
+        $follow = $request->get('follow', 0);
+        if($follow){
+
+        }
+    }
+
     public function update(Request $request, $id){
         $user = Auth::user();
         if(!$user)
@@ -66,7 +74,10 @@ class ArticleController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $validator->errors()->all();
+            return [
+                'status'=>0,
+                'msg'=>'发布失败'
+            ];
         }
         $user = Auth::user();
         $article = new Article();
@@ -78,5 +89,24 @@ class ArticleController extends Controller
         $article->save();
         return ['status' => 1, 'msg'=>'发布成功'];
 
+    }
+    public function del(Request $request, $id){
+        $user = Auth::user();
+        $article = Article::find($id);
+        if(!$article)
+            return [
+                'status'=>0,
+                'msg'=>'找不到对应资源'
+            ];
+        if($user->id!=$article->user_id)
+            return [
+                'status'=>0,
+                'msg'=>'无权限'
+            ];
+        $article->delete();
+        return [
+            'status'=>1,
+            'msg'=>'删除成功'
+        ];
     }
 }
