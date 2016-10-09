@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Relation;
+use App\User;
 
 class RelationController extends Controller
 {
@@ -26,7 +27,14 @@ class RelationController extends Controller
     public function follow(Request $request){
         $user = Auth::user();
         $user_id = $request->get('user_id', null);
-        if($user && $user_id){
+        $person = User::find($user_id);
+        if(!$person){
+            return [
+                'status'=>0,
+                'msg'=>'找不到对应的用户'
+            ];
+        }
+        if($user and $user_id){
             $item = Relation::where('user_id', '=', $user->id)->where('follow_id', '=', $user_id)->first();
             if($item){
                 return [
@@ -56,10 +64,15 @@ class RelationController extends Controller
     public function unfollow(Request $request){
         $user_id = $request->get('user_id', -1);
         $user = Auth::user();
-        $user->follower()->detach($user_id);
+        $user->followee()->detach($user_id);
         return [
             'status'=>1,
             'msg'=>'操作成功'
         ];
+    }
+
+    public function followerList(Request $request){
+        $user = Auth::user();
+        $res = $user->follower()->with('profile')->paginate(15);
     }
 }
