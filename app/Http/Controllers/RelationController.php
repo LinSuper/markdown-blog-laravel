@@ -73,6 +73,13 @@ class RelationController extends Controller
 
     public function followerList(Request $request){
         $user = Auth::user();
-        $res = $user->follower()->with('profile')->paginate(15);
+        $res = $user->follower()->with('profile')->paginate(20);
+        return $res;
+    }
+
+    public function followeeList(Request $request){
+        $user = Auth::user();
+        $res = $user->followee()->with('profile')->paginate(20);
+        return $res;
     }
 }
