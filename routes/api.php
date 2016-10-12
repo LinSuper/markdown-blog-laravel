@@ -16,3 +16,14 @@ use Illuminate\Http\Request;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
+
+//Route::group(['prefix'=>'api'], function (){
+    Route::resource('article', 'ArticleController');
+    Route::resource('profile', 'ProfileController');
+    //Route::group(['middleware'=>'auth'], function (){
+        Route::post('follow', 'RelationController@follow');
+        Route::post('unfollow', 'RelationController@unfollow');
+        Route::get('followerList', 'RelationController@followerList');
+        Route::get('followeeList', 'RelationController@followeeList');
+    //});
+//});

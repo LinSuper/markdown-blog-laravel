@@ -16,7 +16,7 @@ class RelationController extends Controller
      */
     public function __construct()
     {
-        //$this->middleware('auth');
+        parent::__construct();
     }
 
     /**
@@ -25,7 +25,7 @@ class RelationController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function follow(Request $request){
-        $user = Auth::user();
+        $user = $this->user?$this->user:Auth::user();
         $user_id = $request->get('user_id', null);
         $person = User::find($user_id);
         if(!$person){
@@ -63,7 +63,7 @@ class RelationController extends Controller
 
     public function unfollow(Request $request){
         $user_id = $request->get('user_id', -1);
-        $user = Auth::user();
+        $user = $this->user?$this->user:Auth::user();
         $user->followee()->detach($user_id);
         return [
             'status'=>1,
@@ -72,13 +72,13 @@ class RelationController extends Controller
     }
 
     public function followerList(Request $request){
-        $user = Auth::user();
+        $user = $this->user?$this->user:Auth::user();
         $res = $user->follower()->with('profile')->paginate(20);
         return $res;
     }
 
     public function followeeList(Request $request){
-        $user = Auth::user();
+        $user = $this->user?$this->user:Auth::user();
         $res = $user->followee()->with('profile')->paginate(20);
         return $res;
     }

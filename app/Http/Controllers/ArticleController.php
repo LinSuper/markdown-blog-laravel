@@ -43,7 +43,7 @@ class ArticleController extends Controller
     }
 
     public function update(Request $request, $id){
-        $user = Auth::user();
+        $user = $this->user?$this->user:Auth::user();
         if(!$user)
             return [
                 'status'=>0,
@@ -79,7 +79,7 @@ class ArticleController extends Controller
                 'msg'=>'发布失败'
             ];
         }
-        $user = Auth::user();
+        $user = $this->user?$this->user:Auth::user();
         $article = new Article();
         $article->title = $request->get('title');
         $article->content = $request->get('content');
@@ -91,7 +91,7 @@ class ArticleController extends Controller
 
     }
     public function del(Request $request, $id){
-        $user = Auth::user();
+        $user = $this->user?$this->user:Auth::user();
         $article = Article::find($id);
         if(!$article)
             return [
