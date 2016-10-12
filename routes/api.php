@@ -18,6 +18,9 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:api');
 
 //Route::group(['prefix'=>'api'], function (){
+    Route::post('fileUpload', 'FileController@update');
+    Route::post('article/{id}/comment', 'CommentController@store');
+    Route::get('article/{id}/comments', 'CommentController@index');
     Route::resource('article', 'ArticleController');
     Route::resource('profile', 'ProfileController');
     //Route::group(['middleware'=>'auth'], function (){

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class ProfileController extends Controller
 {
     public function store(Request $request){
-        $user = Auth::user();
+        $user = $this->user?$this->user:Auth::user();
         $profile = $user->profile()->first();
         if($profile){
             $profile->image_url = $request->get('image_url');
