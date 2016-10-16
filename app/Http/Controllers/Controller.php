@@ -15,7 +15,7 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     public function __construct()
     {
-        $uuid = Input::get('uuid');
+        $uuid = Input::header('uuid');
         $this->user = User::find($uuid);
     }
 }

@@ -31,6 +31,6 @@ class CommentController extends Controller
 
     public function index(Request $request, $id){
         $article = Article::find($id);
-        return $article->comment()->paginate(20);
+        return $article->comment()->paginate(10);
     }
 }
