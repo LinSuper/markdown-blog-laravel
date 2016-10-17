@@ -35,6 +35,11 @@ class RelationController extends Controller
             ];
         }
         if($user and $user_id){
+            if($user->id==$user_id)
+                return [
+                    'status'=>0,
+                    'msg'=>'不能关注自己'
+                ];
             $item = Relation::where('user_id', '=', $user->id)->where('follow_id', '=', $user_id)->first();
             if($item){
                 return [

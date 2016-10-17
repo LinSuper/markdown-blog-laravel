@@ -11,7 +11,7 @@ use App\User;
 
 class Controller extends BaseController
 {
-    public $user;
+    protected $user;
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     public function __construct()
     {

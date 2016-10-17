@@ -21,6 +21,7 @@ Route::get('/user', function (Request $request) {
     Route::post('fileUpload', 'FileController@update');
     Route::post('article/{id}/comment', 'CommentController@store');
     Route::get('article/{id}/comments', 'CommentController@index');
+    Route::put('article/test', 'ArticleController@test');
     Route::resource('article', 'ArticleController');
     Route::resource('profile', 'ProfileController');
     //Route::group(['middleware'=>'auth'], function (){

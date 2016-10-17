@@ -37,8 +37,19 @@ class ArticleController extends Controller
 
     public function index(Request $request){
         $follow = $request->get('follow', 0);
+        $user = $this->user?$this->user:Auth::user();
         if($follow){
+            $followee_list = $user->followee()->get(['users.id'])->toArray();
+            $followee_ids = array_column($followee_list, 'id');
+            $articles = Article::whereIn('user_id', $followee_ids)->withCount(['comment', 'like', 'backup'])
+                ->orderBy('updated_at', -1)->paginate(20);
+            return $articles;
 
+
+        }else{
+            $articles = Article::withCount(['comment', 'like', 'backup'])
+                ->orderBy('updated_at', -1)->paginate(20);
+            return $articles;
         }
     }
 
@@ -95,7 +106,7 @@ class ArticleController extends Controller
         return ['status' => 1, 'msg'=>'发布成功', 'data'=> $article];
 
     }
-    public function del(Request $request, $id){
+    public function destroy(Request $request, $id){
         $user = $this->user?$this->user:Auth::user();
         $article = Article::find($id);
         if(!$article)
@@ -113,5 +124,15 @@ class ArticleController extends Controller
             'status'=>1,
             'msg'=>'删除成功'
         ];
+    }
+    public function show($id){
+        return [
+            'status'=>1,
+            'data'=>Article::with('user')->withCount(['comment', 'like', 'backup'])->find($id)
+        ];
+    }
+
+    public function test(Request $request){
+        return $request->all();
     }
 }
