@@ -24,6 +24,8 @@ Route::get('/user', function (Request $request) {
     Route::put('article/test', 'ArticleController@test');
     Route::resource('article', 'ArticleController');
     Route::resource('profile', 'ProfileController');
+    Route::post('like', 'LikeController@like');
+    Route::post('unlike', 'LikeController@unlike');
     //Route::group(['middleware'=>'auth'], function (){
         Route::post('follow', 'RelationController@follow');
         Route::post('unfollow', 'RelationController@unfollow');

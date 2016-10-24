@@ -16,12 +16,12 @@ class CommentController extends Controller
         $user_id = $user->id;
         //$article_id = $request->get('article_id');
         $content = $request->get('content');
-        $reply_user_id = $request->get('reply_user_id');
+        $reply_comment_id = $request->get('reply_comment_id');
         $comment = new Comment();
         $comment->user_id = $user_id;
         $comment->article_id = $id;
         $comment->content = $content;
-        $comment->reply_user_id = $reply_user_id;
+        $comment->reply_comment_id = $reply_comment_id;
         $comment->save();
         return [
             'status'=>1,
@@ -31,6 +31,6 @@ class CommentController extends Controller
 
     public function index(Request $request, $id){
         $article = Article::find($id);
-        return $article->comment()->paginate(10);
+        return $article->comment()->with('user')->paginate(10);
     }
 }

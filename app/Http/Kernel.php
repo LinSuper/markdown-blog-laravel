@@ -15,6 +15,7 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+        \App\Http\Middleware\EnableCrossRequestMiddleware::class
     ];
 
     /**
@@ -35,7 +36,7 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:60,1',
             'bindings',
-            \App\Http\Middleware\EnableCrossRequestMiddleware::class
+
         ],
     ];
 
