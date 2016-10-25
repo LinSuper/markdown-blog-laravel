@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Article;
 use Illuminate\Support\Facades\Input;
 use Validator;
+use App\Http\Library\Transformer;
 
 class ArticleController extends Controller
 {
@@ -41,14 +42,16 @@ class ArticleController extends Controller
         if($follow){
             $followee_list = $user->followee()->get(['users.id'])->toArray();
             $followee_ids = array_column($followee_list, 'id');
-            $articles = Article::whereIn('user_id', $followee_ids)->withCount(['comment', 'like', 'backup'])
+            $articles = Article::whereIn('user_id', $followee_ids)->with('user')->withCount(['comment', 'like', 'backup'])
                 ->orderBy('updated_at', -1)->paginate(20);
             return $articles;
 
 
         }else{
-            $articles = Article::withCount(['comment', 'like', 'backup'])
+            $articles = Article::withCount(['comment', 'like', 'backup'])->with('user')
                 ->orderBy('updated_at', -1)->paginate(20);
+            $transfer = new Transformer($articles);
+            return $transfer->transform()->json();
             return $articles;
         }
     }

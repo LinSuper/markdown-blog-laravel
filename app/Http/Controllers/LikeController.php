@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Like;
+use App\Article;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests;
 
@@ -24,6 +25,13 @@ class LikeController extends Controller
             ];
         }
         $article_id = $request->get('article_id');
+        $article = Article::find($article_id);
+        if(!$article){
+            return [
+                'status'=>0,
+                'msg'=>'该文章不存在'
+            ];
+        }
         if($article_id){
             $user_id = $user->id;
             $item = Like::where('article_id', '=', $article_id)
