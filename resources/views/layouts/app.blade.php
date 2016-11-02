@@ -11,6 +11,8 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Styles -->
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    {{--<script src="{{asset('js/app.js')}}"></script>>--}}
     <link href="/css/app.css" rel="stylesheet">
 
     <!-- Scripts -->

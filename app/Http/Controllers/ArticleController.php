@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Article;
 use Illuminate\Support\Facades\Input;
 use Validator;
+use App\Like;
+use App\Backup;
 use App\Http\Library\Transformer;
 
 class ArticleController extends Controller
@@ -44,16 +46,39 @@ class ArticleController extends Controller
             $followee_ids = array_column($followee_list, 'id');
             $articles = Article::whereIn('user_id', $followee_ids)->with('user')->withCount(['comment', 'like', 'backup'])
                 ->orderBy('updated_at', -1)->paginate(20);
-            return $articles;
 
 
         }else{
             $articles = Article::withCount(['comment', 'like', 'backup'])->with('user')
                 ->orderBy('updated_at', -1)->paginate(20);
-            $transfer = new Transformer($articles);
-            return $transfer->transform()->json();
-            return $articles;
         }
+        if(!$user)
+            return $articles;
+        $data = $articles->toArray();
+        $temp = $data['data'];
+        $res_data = [];
+        $id_list = [];
+        foreach($temp as $item){
+            array_push($id_list, $item['id']);
+        }
+        $like_list = Like::where('user_id', '=', $user->id)->whereIn('article_id', $id_list)->get()->toArray();
+        $like_ids = array_column($like_list, 'article_id');
+        $backup_list = Backup::where('user_id', '=', $user->id)->whereIn('article_id', $id_list)->get()->toArray();
+        $backup_ids = array_column($backup_list, 'article_id');
+        foreach($temp as $item){
+            $article_id = $item['id'];
+            if(in_array($article_id, $like_ids))
+                $item['like'] = true;
+            else
+                $item['like'] = false;
+            if(in_array($article_id, $backup_ids))
+                $item['backup'] = true;
+            else
+                $item['backup'] = false;
+            array_push($res_data, $item);
+        }
+        $data['data'] = $res_data;
+        return $data;
     }
 
     public function update(Request $request, $id){
@@ -129,9 +154,33 @@ class ArticleController extends Controller
         ];
     }
     public function show($id){
+        $user = $this->user?$this->user:Auth::user();
+        $data = Article::with('user')->withCount(['comment', 'like', 'backup'])->find($id);
+        if(!$data)
+            return [
+                'status'=>0,
+                'msg'=>'文章不存在'
+            ];
+        $data = $data->toArray();
+        if($user){
+            $like = Like::where('user_id', '=', $user->id)->where('article_id', '=', $id)->first();
+            $backup = Backup::where('user_id', '=', $user->id)->where('article_id', '=', $id)->first();
+            if($like)
+                $data['like'] = true;
+            else
+                $data['like'] = false;
+            if($backup)
+                $data['backup'] = true;
+            else
+                $data['backup'] = false;
+        }
+        else{
+            $data['like'] = false;
+            $data['backup'] = false;
+        }
         return [
             'status'=>1,
-            'data'=>Article::with('user')->withCount(['comment', 'like', 'backup'])->find($id)
+            'data'=>$data
         ];
     }
 

@@ -14,5 +14,9 @@
     "lodash": "^4.14.0",
     "vue": "^1.0.26",
     "vue-resource": "^1.0.2"
+  },
+  "dependencies": {
+    "laravel-echo": "^1.1.1",
+    "pusher-js": "^3.2.1"
   }
 }
