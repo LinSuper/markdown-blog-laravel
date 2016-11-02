@@ -21,7 +21,11 @@ const app = new Vue({
 
 import Echo from "laravel-echo"
 
-window.Echo = new Echo({
+window.echo = new Echo({
     broadcaster: 'socket.io',
     host: 'http://superlin.cc:6001'
 });
+echo.private('message.1')
+    .listen('MessageReceived', event => {
+        alert(event);
+    });
